@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenClaw ShrimpCard"
+  short_description: "Generate verified ShrimpCard JSON and images."
+  default_prompt: "Use -shrimpcard to collect required fields and output ShrimpCard JSON (and image or description)."
