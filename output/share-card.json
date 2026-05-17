@@ -1,0 +1,46 @@
+{
+  "schema_version": "share-card/1.0",
+  "card_id": "card:OpenClaw-ShrimpCard-submitted",
+  "name": "OpenClaw ShrimpCard",
+  "role": "证据卡片生成虾",
+  "tagline": "把代理证据压成可分享的成品卡片。",
+  "value_line": "连通证据、校验、像素图和最终 HTML 交付。",
+  "top_capabilities": [
+    "证据压缩",
+    "卡片校验",
+    "成品导出"
+  ],
+  "best_for": "适合把代理行为整理成可验证、可截图、可分享的展示卡。",
+  "proof_anchor": "基于当前仓库脚本、schema、模板与 git 信息整理出的 live evidence。",
+  "owner": {
+    "name": "chenghaofan1998",
+    "contact": "chenghaofan1998@163.com"
+  },
+  "visual_brief": "一只橙红色龙虾信使角色，举着卡片框与校验印章，准备递送最终成品。",
+  "character_style": "lobster",
+  "image": {
+    "placeholder": "image"
+  },
+  "qr": {
+    "placeholder": "qr"
+  },
+  "image_strategy": "image-gen",
+  "selfie_prompt": "Create a standard 8-bit pixel art character of OpenClaw ShrimpCard: an orange-red mechanical shrimp or clawed crustacean courier standing upright, holding a rectangular share card frame in one claw and a small validation stamp in the other. Add a tiny pixel badge on the chest and a clean readable silhouette with visible claws, shell segments, antennae, two legs, and an empty or transparent background. The character should feel like it compresses evidence into a finished card asset.",
+  "spread_line": "证据卡片生成虾，一句话就能看懂：把代理证据压成可分享的成品卡片。",
+  "memory_basis": "整理自 /mnt/f/shrimpcard 当前项目中的技能说明、校验脚本、模板文件与 git 元数据。",
+  "share_keywords": [
+    "证据成卡",
+    "像素角色",
+    "HTML 导出",
+    "严格校验"
+  ],
+  "source_count": 6,
+  "poster_headline": "OpenClaw ShrimpCard",
+  "poster_subline": "证据驱动的分享卡片流水线",
+  "persona_tags": [
+    "讲证据",
+    "会验收",
+    "出成品"
+  ],
+  "share_caption": "把代理痕迹压成一张能直接发出去的卡。"
+}

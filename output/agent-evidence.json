@@ -1,0 +1,157 @@
+{
+  "schema_version": "agent-evidence/1.0",
+  "agent": {
+    "name": "OpenClaw ShrimpCard",
+    "product_type": "card-generation-agent",
+    "species": "software-agent",
+    "positioning_hint": "evidence-backed card pipeline that turns agent traces into a validated share card and final HTML deliverable",
+    "visual_hint": "open-claw shrimp courier with a card frame, validation stamp, and pixel badge"
+  },
+  "owner": {
+    "name": "chenghaofan1998",
+    "contact": "chenghaofan1998@163.com"
+  },
+  "evidence_window": {
+    "summary": "Live project evidence compiled on May 17, 2026 from the current repository files, git metadata, bundled skill instructions, and runtime validation scripts in /mnt/f/shrimpcard.",
+    "from": "2026-03-10",
+    "to": "2026-05-17",
+    "source_types": [
+      "tool_trace",
+      "output_artifact",
+      "saved_preference",
+      "memory_note"
+    ]
+  },
+  "evidence_items": [
+    {
+      "id": "shrimpcard-001",
+      "type": "tool_trace",
+      "summary": "The live skill flow explicitly defines an end-to-end pipeline from agent-evidence to validated self-intro submission, share-card payload, final image attachment, and rendered selfie-card HTML.",
+      "goal": "Turn repeated agent evidence into a final screenshot-ready card bundle.",
+      "tools_used": [
+        "scripts/build_memory_search_prompt.py",
+        "scripts/build_submission_prompt.py",
+        "scripts/submission_to_share_card.py",
+        "scripts/attach_generated_image.py",
+        "scripts/render_card_html.py"
+      ],
+      "workflow_traits": [
+        "pipeline-driven",
+        "validation-first",
+        "artifact-oriented"
+      ],
+      "value_signals": [
+        "keeps delivery structured",
+        "connects text, image, and html outputs"
+      ],
+      "confidence": 0.99,
+      "source_ref": "SKILL.md"
+    },
+    {
+      "id": "shrimpcard-002",
+      "type": "saved_preference",
+      "summary": "The skill rules repeatedly reject generic identity claims, fixture reuse, guessed owner info, and placeholder-image states, forcing the final card to stay evidence-backed and concrete.",
+      "keywords": [
+        "evidence-backed",
+        "no fixtures",
+        "no placeholders"
+      ],
+      "workflow_traits": [
+        "truthful compression",
+        "anti-generic",
+        "owner-aware"
+      ],
+      "value_signals": [
+        "prevents fake public copy",
+        "guards against low-quality outputs"
+      ],
+      "confidence": 0.98,
+      "source_ref": "SKILL.md; references/agent-self-extraction-guide.md"
+    },
+    {
+      "id": "shrimpcard-003",
+      "type": "tool_trace",
+      "summary": "The validation scripts enforce exact field counts, readable short copy, recognizable character cues, explicit 8-bit or pixel-art direction, and final image attachment before HTML rendering succeeds.",
+      "tools_used": [
+        "scripts/validate_self_intro_submission.py",
+        "scripts/validate_final_bundle.py",
+        "scripts/validate_rendered_html.py"
+      ],
+      "workflow_traits": [
+        "strict validation",
+        "retry until valid",
+        "image-gated rendering"
+      ],
+      "value_signals": [
+        "reduces broken outputs",
+        "ensures final assets are actually usable"
+      ],
+      "confidence": 0.99,
+      "source_ref": "scripts/validate_self_intro_submission.py; scripts/validate_final_bundle.py; scripts/validate_rendered_html.py"
+    },
+    {
+      "id": "shrimpcard-004",
+      "type": "output_artifact",
+      "summary": "The repo already contains a card template, schemas, prompt builders, and a smoke test that confirms the expected outputs are prompts, share-card JSON, attached-image bundle, and rendered Chinese and English HTML cards.",
+      "outputs": [
+        "memory-search prompt",
+        "workflow prompt",
+        "submission prompt",
+        "share-card.json",
+        "selfie-card.zh.html",
+        "selfie-card.en.html"
+      ],
+      "workflow_traits": [
+        "template-backed",
+        "schema-backed",
+        "multi-artifact delivery"
+      ],
+      "value_signals": [
+        "standardizes the output surface",
+        "supports repeatable production"
+      ],
+      "confidence": 0.97,
+      "source_ref": "assets/card-template.html; schemas/*.json; scripts/smoke_test_current_flow.sh"
+    },
+    {
+      "id": "shrimpcard-005",
+      "type": "memory_note",
+      "summary": "Live repo metadata and branding cues explicitly include OpenClaw and ShrimpCard naming, making a claw or shrimp-like mascot direction valid for this project when it stays tied to the card pipeline role.",
+      "keywords": [
+        "OpenClaw",
+        "ShrimpCard",
+        "claw branding"
+      ],
+      "workflow_traits": [
+        "branded identity",
+        "mascot-compatible"
+      ],
+      "value_signals": [
+        "gives the final card a recognizable public face",
+        "keeps visuals aligned with the project identity"
+      ],
+      "confidence": 0.95,
+      "source_ref": "agents/openai.yaml; SKILL.md; scripts/identity_rules.py"
+    },
+    {
+      "id": "shrimpcard-006",
+      "type": "memory_note",
+      "summary": "Git metadata in the current repository identifies the owner as chenghaofan1998 with contact chenghaofan1998@163.com, and the latest commit message describes this flow as an optimized full-version pipeline.",
+      "keywords": [
+        "owner",
+        "git metadata",
+        "optimized flow"
+      ],
+      "workflow_traits": [
+        "owner-attributed",
+        "actively maintained"
+      ],
+      "value_signals": [
+        "provides a concrete owner identity",
+        "shows the workflow is maintained as a real project"
+      ],
+      "confidence": 0.93,
+      "source_ref": "git config user.name; git config user.email; git log -1"
+    }
+  ]
+}

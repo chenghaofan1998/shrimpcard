@@ -1,62 +1,114 @@
-# ShrimpCard
+# OpenClaw ShrimpCard
 
-一个用于生成“龙虾/小龙虾角色卡片”的小型项目。包含：
-- 单文件 HTML 卡片模板（遵循 `design.md` 设计规范）
-- JSON 数据结构与示例
-- OpenClaw 技能（用于输出准确 JSON/图片信息）
+Turn real agent evidence into a validated public card bundle: self-intro JSON, share-card JSON, a real 8-bit character image, and final screenshot-friendly HTML.
 
-## 目录结构
-- `index.html`：单文件卡片模板（含内联 CSS 与注释）
-- `design.md`：设计规范
-- `card-schema.json`：卡片 JSON Schema
-- `sample-card.json`：示例数据
-- `SOLUTION.md`：整体方案说明
-- `skills/openclaw-shrimpcard/`：OpenClaw 技能（含校验脚本与参考）
-- `原型图.jpg` / `线稿图.svg`：视觉参考
+## Why this project
 
-## 使用方式
+Most "agent profile" demos stop at a prompt, a placeholder image, or some generic copy. OpenClaw ShrimpCard is stricter:
 
-### 1) 直接打开卡片模板
+- it starts from evidence instead of vibes
+- it rejects sample/fixture identity leakage
+- it forces validation before public copy ships
+- it requires a real attached image before final HTML renders
 
-打开 `index.html` 即可预览。
+This makes it useful when you want an agent card that is actually publishable, not just mockable.
 
-### 2) 通过注入数据渲染
+## What it produces
 
-`index.html` 支持 `window.__CARD_DATA__` 注入：
+Given live `agent-evidence/1.0`, the pipeline produces:
 
-```html
-<script>
-  window.__CARD_DATA__ = {
-    card_id: "ID:#0x81e2",
-    name: "麻辣小龙虾1号",
-    bio: "我是一只性格超级热烈的小龙虾，\n擅长帮主人完成小红书运营工作",
-    skills: ["任务操作", "内容创作", "回复机器人"],
-    footer: ["DEPLOYED BY @HAO_FAN", "WeChat: haofan0703"],
-    image: null,
-    qr: null
-  };
-</script>
+1. `agent-self-intro-submission/1.0`
+2. `share-card/1.0`
+3. a real 8-bit PNG character image
+4. final HTML card output for sharing or screenshot export
+
+Canonical flow:
+
+```text
+agent-evidence -> self-intro submission -> share-card -> final image -> selfie-card.html
 ```
 
-### 3) OpenClaw 技能
+## Showcase
 
-技能路径：`skills/openclaw-shrimpcard/`
+Generated project mascot:
 
-- 产出 ShrimpCard JSON（符合 `card-schema.json`）
-- 支持生成或输出图像描述
-- 支持校验脚本：
+![OpenClaw ShrimpCard pixel character](docs/showcase/openclaw-shrimpcard.png)
+
+Persistent showcase assets copied out of `output/`:
+
+- Chinese card HTML: [docs/showcase/selfie-card.zh.html](docs/showcase/selfie-card.zh.html)
+- English card HTML: [docs/showcase/selfie-card.en.html](docs/showcase/selfie-card.en.html)
+- Final share-card bundle: [docs/showcase/share-card.final.json](docs/showcase/share-card.final.json)
+
+These files are intentionally stored under `docs/showcase/` so they remain available even if `output/` is deleted.
+
+## Core strengths
+
+- Evidence-backed identity extraction. The workflow is designed to describe repeated observed behavior, not hypothetical ability.
+- Hard validation gates. Field length, generic wording, mascot rules, image constraints, and final-bundle checks are enforced by scripts.
+- Complete artifact chain. The repository covers prompts, schemas, validation, image attachment, and final rendering in one place.
+- Share-ready output. The final HTML removes preview-only internals and is suitable for direct presentation.
+
+## Repository structure
+
+```text
+agents/       interface metadata
+assets/       card template and bundled visual assets
+examples/     smoke-test fixtures only, not live inputs
+references/   evidence extraction guidance
+schemas/      JSON schemas
+scripts/      prompt builders, validators, converters, renderers
+docs/showcase persistent demo assets for README and GitHub visitors
+```
+
+## Quick start
+
+Install the only required dependency:
 
 ```bash
-python3 skills/openclaw-shrimpcard/scripts/validate_card.py sample-card.json
+pip install -r requirements.txt
 ```
 
-## 设计规范
+Then run the flow with your own live evidence:
 
-请以 `design.md` 为准：
-- 90s 复古波普 + 现代瑞士网格
-- 2D 平面、强对比、粗黑描边
-- 固定布局（顶部插画 / 身份 / 简介 / 标签 / 底部信息 + QR）
+```bash
+python3 scripts/build_memory_search_prompt.py path/to/agent-context.json --lang zh
+python3 scripts/build_submission_prompt.py path/to/agent-evidence.json --lang zh
+python3 scripts/validate_self_intro_submission.py path/to/submission.json
+python3 scripts/submission_to_share_card.py path/to/submission.json --out share-card.json
+python3 scripts/build_image_task_prompt.py path/to/submission.json --out image-task.txt
+python3 scripts/attach_generated_image.py share-card.json --image-file path/to/final.png
+python3 scripts/validate_final_bundle.py share-card.json
+python3 scripts/render_card_html.py share-card.json --lang zh --out selfie-card.html
+```
 
-## License
+## Smoke test
 
-未声明。
+The repo includes a current-flow smoke test:
+
+```bash
+bash scripts/smoke_test_current_flow.sh
+```
+
+It verifies that the fixture-based example path can still generate prompts, a share card, an attached-image bundle, and both Chinese and English HTML outputs.
+
+## Rules that matter
+
+- Do not use `examples/` as live identity evidence.
+- Do not guess missing owner identity fields.
+- Do not ship generic claims like "powerful assistant" or "strong reasoning".
+- Do not stop at placeholder-image state.
+- Do not render the final card before the image-attached bundle passes validation.
+
+## Good fit
+
+OpenClaw ShrimpCard fits teams that want:
+
+- agent showcase pages with stronger truthfulness guarantees
+- a repeatable way to compress traces into public-facing copy
+- a share-card format that stays compatible with strict schema checks
+- a visual agent card that includes a real mascot asset instead of a mock placeholder
+
+## Current demo inputs
+
+The latest demo bundle in this repo was generated from live project evidence inside the current repository rather than `examples/`. The generated outputs were first written to `output/` and then the README-facing assets were copied into `docs/showcase/` for long-term retention.

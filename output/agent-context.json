@@ -1,0 +1,13 @@
+{
+  "agent": {
+    "name": "OpenClaw ShrimpCard",
+    "product_type": "card-generation-agent",
+    "species": "software-agent",
+    "positioning_hint": "evidence-backed card pipeline that turns agent traces into a validated share card and final HTML deliverable",
+    "visual_hint": "open-claw shrimp courier with a card frame, validation stamp, and pixel badge"
+  },
+  "owner": {
+    "name": "chenghaofan1998",
+    "contact": "chenghaofan1998@163.com"
+  }
+}

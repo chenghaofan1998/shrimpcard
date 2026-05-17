@@ -1,0 +1,919 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Share Card Poster</title>
+  <style>
+    :root {
+      --bg: #fff7df;
+      --surface: rgba(255,255,255,0.78);
+      --text: #141414;
+      --muted: #5d5d5d;
+      --border: #111111;
+      --accent: #ff7548;
+      --accent-strong: #0d8f87;
+      --accent-2: #0d8f87;
+      --tag-1: #ffd865;
+      --tag-2: #ffb78a;
+      --tag-3: #9de2d3;
+      --shadow: 0 18px 48px rgba(0,0,0,0.14);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.95), transparent 26%),
+        linear-gradient(180deg, #fff8e8 0%, #ffecc9 100%);
+      padding: 28px 16px 48px;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      display: grid;
+      gap: 22px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 480px) minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .poster-wrap {
+      width: 480px;
+      max-width: 100%;
+    }
+
+    .poster-frame {
+      border: 3px solid var(--border);
+      border-radius: 36px;
+      padding: 12px;
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.92), transparent 32%),
+        linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.72));
+      box-shadow: var(--shadow);
+    }
+
+    .poster-card {
+      position: relative;
+      background: var(--bg);
+      border: 3px solid var(--border);
+      border-radius: 30px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .poster-photo {
+      position: relative;
+      overflow: hidden;
+      flex: 0 0 auto;
+      min-height: 352px;
+      background:
+        radial-gradient(circle at 26% 18%, rgba(255,255,255,0.22), transparent 16%),
+        radial-gradient(circle at 72% 28%, rgba(255,255,255,0.16), transparent 18%),
+        linear-gradient(180deg, var(--accent) 0%, color-mix(in srgb, var(--accent) 72%, #ffffff 28%) 40%, var(--accent-2) 100%);
+      border-bottom: 3px solid var(--border);
+    }
+
+    .poster-card[data-guide-mode="true"] .poster-photo {
+      background: #ffffff;
+    }
+
+    .poster-card[data-guide-mode="true"] .poster-photo::before,
+    .poster-card[data-guide-mode="true"] .poster-photo::after {
+      content: none;
+    }
+
+    .poster-card[data-guide-mode="true"] .poster-badge,
+    .poster-card[data-guide-mode="true"] .poster-id,
+    .poster-card[data-guide-mode="true"] .photo-placeholder {
+      display: none !important;
+    }
+
+    .poster-photo img {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .poster-photo[data-empty="true"] {
+      background:
+        linear-gradient(180deg, #fffdf7 0%, #f8f1df 100%);
+    }
+
+    .poster-photo[data-empty="true"] .poster-headline {
+      color: var(--text);
+      text-shadow: none;
+    }
+
+    .poster-photo[data-empty="true"] .poster-subline {
+      background: rgba(255,255,255,0.96);
+    }
+
+    .poster-photo[data-guide-mode="true"] img {
+      display: none !important;
+    }
+
+    .poster-badge,
+    .poster-id {
+      position: absolute;
+      z-index: 2;
+      border: 2px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.94);
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .poster-badge { top: 14px; left: 14px; }
+    .poster-id { top: 14px; right: 14px; }
+
+    .photo-placeholder {
+      position: absolute;
+      left: 50%;
+      top: 44%;
+      transform: translate(-50%, -50%);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 2px solid var(--border);
+      background: rgba(255,255,255,0.9);
+      color: var(--text);
+      font-weight: 900;
+      font-size: 12px;
+      line-height: 1;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      z-index: 1;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .poster-body {
+      flex: 0 0 auto;
+      padding: 16px 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .identity-row {
+      display: grid;
+      gap: 6px;
+    }
+
+    .name {
+      margin: 0;
+      font-size: 30px;
+      line-height: 1;
+      font-weight: 980;
+      letter-spacing: -0.04em;
+      word-break: break-word;
+    }
+
+    .role {
+      font-size: 13px;
+      line-height: 1.35;
+      color: var(--muted);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      word-break: break-word;
+    }
+
+    .tagline {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1.3;
+      font-weight: 900;
+    }
+
+    .persona-tags {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .persona-tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 2px solid var(--border);
+      font-size: 12px;
+      font-weight: 900;
+      background: #fff;
+      line-height: 1.2;
+      word-break: break-word;
+    }
+
+    .share-caption {
+      border: 2px solid var(--border);
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.88), rgba(255,255,255,0.76));
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 1.42;
+      font-weight: 800;
+      word-break: break-word;
+    }
+
+    .poster-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding-top: 2px;
+    }
+
+    .poster-mark {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    .poster-mark::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      border: 2px solid var(--border);
+      background: var(--accent-strong);
+      display: inline-block;
+    }
+
+    .owner {
+      display: grid;
+      gap: 3px;
+      font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+      font-size: 11px;
+      font-weight: 800;
+      word-break: break-word;
+    }
+
+    .owner-line {
+      margin: 0;
+    }
+
+    .qr-box {
+      width: 72px;
+      height: 72px;
+      flex: 0 0 72px;
+      border-radius: 16px;
+      border: 3px solid var(--border);
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .qr-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .qr-placeholder {
+      font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .side {
+      display: grid;
+      gap: 16px;
+    }
+
+    .panel {
+      border: 3px solid var(--border);
+      border-radius: 24px;
+      background: var(--surface);
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .headline {
+      margin: 0 0 10px;
+      font-size: 46px;
+      line-height: 0.94;
+      font-weight: 980;
+      letter-spacing: -0.06em;
+      max-width: 11ch;
+    }
+
+    .subheadline {
+      margin: 0;
+      max-width: 42ch;
+      font-size: 18px;
+      line-height: 1.58;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .meta-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .meta-pill {
+      border: 2px solid var(--border);
+      border-radius: 999px;
+      background: #fff;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .mini-card,
+    .prompt-card,
+    .proof {
+      border: 2px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      background: rgba(255,255,255,0.82);
+    }
+
+    .mini-label,
+    .proof-label {
+      margin-bottom: 8px;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    .mini-value,
+    .proof-text {
+      font-size: 16px;
+      line-height: 1.5;
+      font-weight: 800;
+    }
+
+    .prompt-card pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.56;
+      color: #202020;
+      max-height: 260px;
+      overflow: auto;
+    }
+
+    @media (max-width: 940px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .poster-wrap {
+        width: 100%;
+      }
+
+      .headline {
+        max-width: none;
+        font-size: 38px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      body { padding: 18px 10px 36px; }
+      .poster-headline { font-size: 36px; }
+      .poster-photo { min-height: 280px; }
+      .poster-headline { font-size: 34px; }
+      .name { font-size: 28px; }
+      .tagline { font-size: 18px; }
+      .mini-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page" style="--bg:#FFF7DF;--border:#111111;--accent:#FF7548;--accent-strong:#9DE2D3;--accent-2:#9DE2D3;--tag-1:#FFD865;--tag-2:#FFB78A;--tag-3:#9DE2D3;">
+    <section class="hero">
+      <div class="poster-wrap">
+        <div class="poster-frame">
+          <article class="poster-card" id="exportCard" data-role-backdrop="grid" data-guide-mode="false">
+            <section class="poster-photo" data-role-backdrop="grid" data-guide-mode="false" data-empty="false">
+              <span class="poster-badge" id="posterBadge">ShrimpCard</span>
+              <img id="mainImage" alt="Agent selfie image" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA8AAAALQCAYAAABfdxm0AAAex0lEQVR42u3cMU4zQZeGUS8CEbEYEnIiqxfBAhwi5EWxAPZA1EEHzghxQtJgJBIkhNoul2/VPUd6w5H+obr81TMzmtUKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGja1fXNnGlOHAAAQAALYAAAAASwAAYAAEAAC2AAAAAEsAAGAABAAAtgAAAABLAABgAAQAALYAAAAASwAAYAAEAAAwAAIIAFMAAAAAJYAAMAACCABTAAAAACWAADAAAggAUwAAAAAlgAAwAAIIAFMAAAAAJYAAMAACCAAQAAEMACGAAAgB4D8/X+NtUEOgAAgAAWwAIYAABAAAtgAQwAACCABbAABgAAEMACWAADAAACWAALYAEMAAAIYAEsgAEAAASwABbAAAAAAlgAC2AAAAABLIAFMAAAgAAWwAIYAABAAAtgAQwAACCABbAABgAABLAAFsACGAAAEMACWAALYAAAQAALYAEMAAAggAWwAAYAABDAAlgAAwAACGABLIABAAAEsAAWwAAAgGDtMTD323WqZQt0NxoAABDAAlgAAwAAAlgAC2ABDAAACGABLIAFMAAAIIAFsAAWwAAAgAAWwAJYAAMAAAJYAAtgAQwAAAhgASyABTAAACCABbAAFsAAAIAAFsACGAAAQAALYAEMAAAIYAEsgAUwAAAggAWwABbAAACAABbAAlgAAwAAAlgAC2ABDAAACGABLIAFMAAAIIAFsAAWwAAAgAAWwAJYAAMAAAJYAAtgAAAAASyABTAAACBYBasJakENAAACWACbAAYAAASwABbAAhgAABDAAlgAC2AAAEAAC2ABLIABAAABLIAFsAAGAAABLIBNAAtgAAAQwALYBLAABgAAASyATQALYAAAEMAC2ASwAAYAAAEsgE0AAwAAAlgAC2ABDAAACGABLIAFMAAAIIAFsAAWwAAAgAAWwAJYAAMAgAAWwCaABTAAAAhgAWwCWAADAIAAFsAmgAUwAAAIYAFsAlgAAwCAABbAAlgAAwAAgrWNoIk+QS2oAQBAAAtgASyABTAAAAhgASyABbAABgAAASyABbAAFsAAACCABbAAFsACGAAABLAAFsACWAADAIAAFsACWAALYAAAEMACWAALYAEMAIAAFsACWAALYAAAEMACWAALYAEMAAACWAALYAEsgAEAQAALYAEsgAUwAAAIYAEsgAWwAAYAAAEsgAWwABbAAAAggAWwABbAAhgAAASwABbAAlgAAwCAABbAAlgAC2AAAASwABbAAlgAAwCAABbAAlgAC2AAABDAAlgAC2ABDAAAgrXHwBymMdWif8+CWlADACCABbAAFsACWAADACCABbAAFsACWAADACCABbAAFsACWAADACCABbAAFsACWAADACCABbAAFsACGAAABLAAFsACWAADAIAAFsACWAALYAAAEMACWAALYAEMAIAAFsACWAALYAEMAIAAFsACWAALYAEMAIAAFsACWAALYAEMAIAAFsACWAALYAEMAIAAFsACWAALYAEMAIAAFsACWAALYAAAEMACWAALYAEMAAACWAALYAEsgAEAEMACWAALYAEsgAEAEMACWAALYAEsgAEAEMACWAALYAEsgAEAEKwxH9DZAjNbAEf/7zd6oAtqAAAEsAA2ASyABTAAAAJYAJsAFsACGAAAASyATQALYAEMAIAAFsAmgAWwAAYAQAALYAEsgAWwAAYAEMACWAALYAEsgAUwdf+99P0BgAAWwCaABbAARgD7/gBAAAtgE8ACWAAjgH1/ACCABbAJYAEsgBHAAIAAFsACWAALYAGMAAYA/6ALYAEsgAWwABYgCGAA8A+6ABbAAlgAC2ABggAGAP+gC2ABLIAFsAAWIP69FMAAIIAFsAlgASyA8e+lAAYA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" style="display:block;">
+              <div class="photo-placeholder" id="photoPlaceholder" style="display:none;">等待附加图片</div>
+            </section>
+
+            <section class="poster-body">
+              <div class="identity-row">
+                <h1 class="name" id="name">OpenClaw ShrimpCard</h1>
+                <div class="role" id="role">证据卡片生成虾</div>
+              </div>
+
+              <p class="tagline" id="tagline">把代理证据压成可分享的成品卡片。</p>
+
+              <div class="persona-tags" id="personaTags"><span class="persona-tag" style="background: var(--tag-1);">讲证据</span><span class="persona-tag" style="background: var(--tag-2);">会验收</span><span class="persona-tag" style="background: var(--tag-3);">出成品</span></div>
+
+              <div class="share-caption" id="shareCaption">把代理痕迹压成一张能直接发出去的卡。</div>
+
+              <div class="poster-footer">
+                <div class="owner" id="ownerBlock"><p class="owner-line">主人 chenghaofan1998</p><p class="owner-line">chenghaofan1998@163.com</p></div>
+                <div class="poster-mark" id="posterMark">Shareable Agent Poster</div>
+              </div>
+            </section>
+          </article>
+        </div>
+      </div>
+
+      <div class="side">
+        <section class="panel">
+          <h2 class="headline" id="sideHeadline">OpenClaw ShrimpCard</h2>
+          <p class="subheadline" id="subheadline">证据驱动的分享卡片流水线</p>
+          <div class="meta-row" id="metaKeywords"><span class="meta-pill">证据成卡</span><span class="meta-pill">像素角色</span><span class="meta-pill">HTML 导出</span><span class="meta-pill">严格校验</span></div>
+        </section>
+
+        <section class="panel">
+          <div class="mini-grid">
+            <div class="mini-card">
+              <div class="mini-label">Best For</div>
+              <div class="mini-value" id="bestFor">适合把代理行为整理成可验证、可截图、可分享的展示卡。</div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-label">Why It Spreads</div>
+              <div class="mini-value" id="spreadReason">证据卡片生成虾，一句话就能看懂：把代理证据压成可分享的成品卡片。</div>
+            </div>
+          </div>
+
+          <div class="proof" style="margin-top: 14px;">
+            <div class="proof-label">Why This Fits</div>
+            <div class="proof-text" id="proofAnchor">基于当前仓库脚本、schema、模板与 git 信息整理出的 live evidence。</div>
+          </div>
+
+          <div class="mini-card" style="margin-top: 14px;">
+            <div class="mini-label">Memory Basis</div>
+            <div class="mini-value" id="memoryBasis">整理自 /mnt/f/shrimpcard 当前项目中的技能说明、校验脚本、模板文件与 git 元数据。</div>
+          </div>
+
+          <div class="prompt-card" style="margin-top: 14px;">
+            <div class="mini-label">Selfie Prompt Preview</div>
+            <pre id="selfiePrompt">Image brief for OpenClaw ShrimpCard
+
+Goal:
+- create a final 8-bit character image outside this repo
+- this repo does not auto-draw the final image
+- the job here is to guide the artist / image model and then review whether the result matches the agent identity
+
+Required style:
+- standard 8-bit pixel art
+- low-resolution sprite logic
+- hard edges
+- strong silhouette
+- one clearly recognizable character
+- no smooth gradients
+- no painterly rendering
+- no reused repo sample composition
+- no old mascot template
+- do not imitate the existing repo sample image composition
+- do not produce a minor variation of the current sample mascot
+- build the silhouette and props strictly from the current agent identity
+- no abstract icon, no pure geometry, no symbol-only solution
+- no photorealism
+
+Character direction:
+- subject: anthropomorphic lobster agent mascot
+- role: 证据卡片生成虾
+- visual brief: 一只橙红色龙虾信使角色，举着卡片框与校验印章，准备递送最终成品。
+- persona tags: 讲证据, 会验收, 出成品
+- top capabilities: 证据压缩, 卡片校验, 成品导出
+- proof anchor: 基于当前仓库脚本、schema、模板与 git 信息整理出的 live evidence。
+- The lobster silhouette must read clearly as lobster: visible claws, segmented body, antennae or shell cues.
+- - Do not derive the target identity from the skill name, repository name, package name, script path, config file, or interface label.
+- If live evidence does not explicitly name a branded agent family or mascot, keep the public identity neutral.
+- In neutral cases, prefer `character_style: agent-avatar` and generic role naming over mascot branding.
+- Live evidence explicitly contains claw/lobster/shrimp branding, so `character_style: lobster` is allowed only if the final copy stays faithful to that evidence.
+- before drawing, identify one clear character concept in one sentence
+- before drawing, identify the 1 to 3 visual signals that prove the role
+- if the concept cannot be described clearly in words, do not draw yet; rewrite the concept first
+
+Composition:
+- 3/4 portrait or upper-body character framing
+- centered composition
+- transparent background or fully empty background only
+- do not draw scenery, interface backdrops, posters, dashboards, stickers, or environment decoration
+- props are allowed only when they directly communicate one of the listed capabilities
+- every visible prop must map back to the role, persona tags, or top capabilities
+- leave safe space around the character silhouette
+
+Canvas spec:
+- output PNG
+- target size: 960 x 720
+- keep at least 64 px safe margin around the main silhouette
+- This image will be used in the poster photo area of the card. Keep the character centered and readable after mild cover-cropping.
+- preferred delivery: transparent PNG
+
+Prompt draft:
+Create a standard 8-bit pixel art character of OpenClaw ShrimpCard: an orange-red mechanical shrimp or clawed crustacean courier standing upright, holding a rectangular share card frame in one claw and a small validation stamp in the other. Add a tiny pixel badge on the chest and a clean readable silhouette with visible claws, shell segments, antennae, two legs, and an empty or transparent background. The character should feel like it compresses evidence into a finished card asset.
+
+Priority:
+- the rules above override any conflicting wording in the draft
+- use the draft for subject clues, not for background or layout
+- if the draft mentions a background, ignore it unless it says the image must be empty or transparent
+
+Review checklist:
+- can a stranger infer the role from the silhouette and 1-2 props alone
+- does the design reflect the actual agent traits instead of a generic agent mascot
+- does the image avoid any background art
+- can a stranger name the subject as a character instead of calling it an abstract shape
+- for lobster mode: would a viewer immediately call it a lobster rather than a random creature
+- are the persona tags and capability cues visible without text overlay
+
+Delivery rules:
+- return a final PNG image
+- generate a fresh image for this exact agent identity; do not reuse a sample image from this repo
+- if the image model only outputs square images, crop or extend to 960x720 while keeping the subject centered and the background empty
+- if the result fails the review checklist, redo it instead of attaching it
+- after image generation, attach it back into the share card with:
+  python3 scripts/attach_generated_image.py path/to/share-card.json --image-url &lt;URL&gt;</pre>
+          </div>
+
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script>
+window.__CARD_DATA__ = {
+  "schema_version": "share-card/1.0",
+  "card_id": "card:OpenClaw-ShrimpCard-submitted",
+  "name": "OpenClaw ShrimpCard",
+  "role": "证据卡片生成虾",
+  "tagline": "把代理证据压成可分享的成品卡片。",
+  "value_line": "连通证据、校验、像素图和最终 HTML 交付。",
+  "top_capabilities": [
+    "证据压缩",
+    "卡片校验",
+    "成品导出"
+  ],
+  "best_for": "适合把代理行为整理成可验证、可截图、可分享的展示卡。",
+  "proof_anchor": "基于当前仓库脚本、schema、模板与 git 信息整理出的 live evidence。",
+  "owner": {
+    "name": "chenghaofan1998",
+    "contact": "chenghaofan1998@163.com"
+  },
+  "visual_brief": "一只橙红色龙虾信使角色，举着卡片框与校验印章，准备递送最终成品。",
+  "character_style": "lobster",
+  "image": {
+    "data_url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA8AAAALQCAYAAABfdxm0AAAex0lEQVR42u3cMU4zQZeGUS8CEbEYEnIiqxfBAhwi5EWxAPZA1EEHzghxQtJgJBIkhNoul2/VPUd6w5H+obr81TMzmtUKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGja1fXNnGlOHAAAQAALYAAAAASwAAYAAEAAC2AAAAAEsAAGAABAAAtgAAAABLAABgAAQAALYAAAAASwAAYAAEAAAwAAIIAFMAAAAAJYAAMAACCABTAAAAACWAADAAAggAUwAAAAAlgAAwAAIIAFMAAAAAJYAAMAACCAAQAAEMACGAAAgB4D8/X+NtUEOgAAgAAWwAIYAABAAAtgAQwAACCABbAABgAAEMACWAADAAACWAALYAEMAAAIYAEsgAEAAASwABbAAAAAAlgAC2AAAAABLIAFMAAAgAAWwAIYAABAAAtgAQwAACCABbAABgAABLAAFsACGAAAEMACWAALYAAAQAALYAEMAAAggAWwAAYAABDAAlgAAwAACGABLIABAAAEsAAWwAAAgGDtMTD323WqZQt0NxoAABDAAlgAAwAAAlgAC2ABDAAACGABLIAFMAAAIIAFsAAWwAAAgAAWwAJYAAMAAAJYAAtgAQwAAAhgASyABTAAACCABbAAFsAAAIAAFsACGAAAQAALYAEMAAAIYAEsgAUwAAAggAWwABbAAACAABbAAlgAAwAAAlgAC2ABDAAACGABLIAFMAAAIIAFsAAWwAAAgAAWwAJYAAMAAAJYAAtgAAAAASyABTAAACBYBasJakENAAACWACbAAYAAASwABbAAhgAABDAAlgAC2AAAEAAC2ABLIABAAABLIAFsAAGAAABLIBNAAtgAAAQwALYBLAABgAAASyATQALYAAAEMAC2ASwAAYAAAEsgE0AAwAAAlgAC2ABDAAACGABLIAFMAAAIIAFsAAWwAAAgAAWwAJYAAMAgAAWwCaABTAAAAhgAWwCWAADAIAAFsAmgAUwAAAIYAFsAlgAAwCAABbAAlgAAwAAgrWNoIk+QS2oAQBAAAtgASyABTAAAAhgASyABbAABgAAASyABbAAFsAAACCABbAAFsACGAAABLAAFsACWAADAIAAFsACWAALYAAAEMACWAALYAEMAIAAFsACWAALYAAAEMACWAALYAEMAAACWAALYAEsgAEAQAALYAEsgAUwAAAIYAEsgAWwAAYAAAEsgAWwABbAAAAggAWwABbAAhgAAASwABbAAlgAAwCAABbAAlgAC2AAAASwABbAAlgAAwCAABbAAlgAC2AAABDAAlgAC2ABDAAAgrXHwBymMdWif8+CWlADACCABbAAFsACWAADACCABbAAFsACWAADACCABbAAFsACWAADACCABbAAFsACWAADACCABbAAFsACGAAABLAAFsACWAADAIAAFsACWAALYAAAEMACWAALYAEMAIAAFsACWAALYAEMAIAAFsACWAALYAEMAIAAFsACWAALYAEMAIAAFsACWAALYAEMAIAAFsACWAALYAEMAIAAFsACWAALYAAAEMACWAALYAEMAAACWAALYAEsgAEAEMACWAALYAEsgAEAEMACWAALYAEsgAEAEMACWAALYAEsgAEAEKwxH9DZAjNbAEf/7zd6oAtqAAAEsAA2ASyABTAAAAJYAJsAFsACGAAAASyATQALYAEMAIAAFsAmgAWwAAYAQAALYAEsgAWwAAYAEMACWAALYAEsgAUwdf+99P0BgAAWwCaABbAARgD7/gBAAAtgE8ACWAAjgH1/ACCABbAJYAEsgBHAAIAAFsACWAALYAGMAAYA/6ALYAEsgAWwABYgCGAA8A+6ABbAAlgAC2ABggAGAP+gC2ABLIAFsAAWIP69FMAAIIAFsAlgASyA8e+lAAYA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"
+  },
+  "qr": {
+    "placeholder": "qr"
+  },
+  "image_strategy": "provided-image",
+  "selfie_prompt": "Image brief for OpenClaw ShrimpCard\n\nGoal:\n- create a final 8-bit character image outside this repo\n- this repo does not auto-draw the final image\n- the job here is to guide the artist / image model and then review whether the result matches the agent identity\n\nRequired style:\n- standard 8-bit pixel art\n- low-resolution sprite logic\n- hard edges\n- strong silhouette\n- one clearly recognizable character\n- no smooth gradients\n- no painterly rendering\n- no reused repo sample composition\n- no old mascot template\n- do not imitate the existing repo sample image composition\n- do not produce a minor variation of the current sample mascot\n- build the silhouette and props strictly from the current agent identity\n- no abstract icon, no pure geometry, no symbol-only solution\n- no photorealism\n\nCharacter direction:\n- subject: anthropomorphic lobster agent mascot\n- role: 证据卡片生成虾\n- visual brief: 一只橙红色龙虾信使角色，举着卡片框与校验印章，准备递送最终成品。\n- persona tags: 讲证据, 会验收, 出成品\n- top capabilities: 证据压缩, 卡片校验, 成品导出\n- proof anchor: 基于当前仓库脚本、schema、模板与 git 信息整理出的 live evidence。\n- The lobster silhouette must read clearly as lobster: visible claws, segmented body, antennae or shell cues.\n- - Do not derive the target identity from the skill name, repository name, package name, script path, config file, or interface label.\n- If live evidence does not explicitly name a branded agent family or mascot, keep the public identity neutral.\n- In neutral cases, prefer `character_style: agent-avatar` and generic role naming over mascot branding.\n- Live evidence explicitly contains claw/lobster/shrimp branding, so `character_style: lobster` is allowed only if the final copy stays faithful to that evidence.\n- before drawing, identify one clear character concept in one sentence\n- before drawing, identify the 1 to 3 visual signals that prove the role\n- if the concept cannot be described clearly in words, do not draw yet; rewrite the concept first\n\nComposition:\n- 3/4 portrait or upper-body character framing\n- centered composition\n- transparent background or fully empty background only\n- do not draw scenery, interface backdrops, posters, dashboards, stickers, or environment decoration\n- props are allowed only when they directly communicate one of the listed capabilities\n- every visible prop must map back to the role, persona tags, or top capabilities\n- leave safe space around the character silhouette\n\nCanvas spec:\n- output PNG\n- target size: 960 x 720\n- keep at least 64 px safe margin around the main silhouette\n- This image will be used in the poster photo area of the card. Keep the character centered and readable after mild cover-cropping.\n- preferred delivery: transparent PNG\n\nPrompt draft:\nCreate a standard 8-bit pixel art character of OpenClaw ShrimpCard: an orange-red mechanical shrimp or clawed crustacean courier standing upright, holding a rectangular share card frame in one claw and a small validation stamp in the other. Add a tiny pixel badge on the chest and a clean readable silhouette with visible claws, shell segments, antennae, two legs, and an empty or transparent background. The character should feel like it compresses evidence into a finished card asset.\n\nPriority:\n- the rules above override any conflicting wording in the draft\n- use the draft for subject clues, not for background or layout\n- if the draft mentions a background, ignore it unless it says the image must be empty or transparent\n\nReview checklist:\n- can a stranger infer the role from the silhouette and 1-2 props alone\n- does the design reflect the actual agent traits instead of a generic agent mascot\n- does the image avoid any background art\n- can a stranger name the subject as a character instead of calling it an abstract shape\n- for lobster mode: would a viewer immediately call it a lobster rather than a random creature\n- are the persona tags and capability cues visible without text overlay\n\nDelivery rules:\n- return a final PNG image\n- generate a fresh image for this exact agent identity; do not reuse a sample image from this repo\n- if the image model only outputs square images, crop or extend to 960x720 while keeping the subject centered and the background empty\n- if the result fails the review checklist, redo it instead of attaching it\n- after image generation, attach it back into the share card with:\n  python3 scripts/attach_generated_image.py path/to/share-card.json --image-url <URL>",
+  "spread_line": "证据卡片生成虾，一句话就能看懂：把代理证据压成可分享的成品卡片。",
+  "memory_basis": "整理自 /mnt/f/shrimpcard 当前项目中的技能说明、校验脚本、模板文件与 git 元数据。",
+  "share_keywords": [
+    "证据成卡",
+    "像素角色",
+    "HTML 导出",
+    "严格校验"
+  ],
+  "source_count": 6,
+  "poster_headline": "OpenClaw ShrimpCard",
+  "poster_subline": "证据驱动的分享卡片流水线",
+  "persona_tags": [
+    "讲证据",
+    "会验收",
+    "出成品"
+  ],
+  "share_caption": "把代理痕迹压成一张能直接发出去的卡。"
+};
+</script>
+
+  <script>
+    const defaultData = {
+      schema_version: "share-card/1.0",
+      card_id: "card:placeholder",
+      name: "Agent Name",
+      role: "Share Card Preview",
+      tagline: "这是首页预览空态，不代表任何真实 agent 内容。",
+      value_line: "用于检查卡片结构、字段映射和图片附加效果。",
+      top_capabilities: ["结构预览", "字段映射", "待附加图片"],
+      best_for: "在接入真实 share-card.json 之前检查首页展示状态。",
+      proof_anchor: "当前页面使用的是内置空态数据，不是实际 submission 结果。",
+      persona_tags: ["结构预览", "字段映射", "待附加图片"],
+      share_caption: "载入正式数据后，这里会显示最终对外摘要。",
+      spread_line: "Share Card Preview：当前展示的是空态预览，不是正式卡片。",
+      memory_basis: "No live card data loaded yet.",
+      owner: { name: "Preview Mode" },
+      image: null,
+      qr: null,
+      theme: {
+        background: "#FFF7DF",
+        border: "#111111",
+        accent: "#FF7548",
+        tag_colors: ["#FFD865", "#FFB78A", "#9DE2D3"]
+      },
+      selfie_prompt: "A validated 8-bit image prompt will appear here after real card data is loaded.",
+      i18n: {
+        zh: {
+          role: "仅供预览",
+          tagline: "这是首页预览空态，不代表任何真实 agent 内容。",
+          value_line: "用于检查卡片结构、字段映射和图片附加效果。",
+          top_capabilities: ["结构预览", "字段映射", "待附加图片"],
+          best_for: "在接入真实 share-card.json 之前检查首页展示状态。",
+          proof_anchor: "当前页面使用的是内置 fixture 数据，不是实际 submission 结果。",
+          spread_line: "仅供预览：当前展示的是空态预览，不是正式卡片。",
+          memory_basis: "当前尚未载入真实卡片数据。",
+          selfie_prompt: "载入真实卡片数据后，这里会显示校验后的 8-bit 图片提示词。",
+          persona_tags: ["结构预览", "字段映射", "待附加图片"],
+          share_caption: "载入正式数据后，这里会显示最终对外摘要。",
+          share_keywords: ["preview", "empty-state", "image-pending"]
+        },
+        en: {
+          role: "Fixture Preview Only",
+          tagline: "This is an empty preview state, not real agent content.",
+          value_line: "Use it to check layout, field mapping, and image attachment behavior.",
+          top_capabilities: ["Layout Preview", "Field Mapping", "Image Pending"],
+          best_for: "Checking the page before loading a real share-card.json payload.",
+          proof_anchor: "The page is using built-in fixture data, not an actual submission result.",
+          spread_line: "Fixture preview only: this page is showing an empty preview state.",
+          memory_basis: "No live card data loaded yet.",
+          selfie_prompt: "A validated 8-bit image prompt will appear here after real card data is loaded.",
+          persona_tags: ["Layout Preview", "Field Mapping", "Image Pending"],
+          share_caption: "The final public summary will appear here after real data is loaded.",
+          share_keywords: ["preview", "empty-state", "image-pending"]
+        }
+      }
+    };
+
+    const uiText = {
+      zh: {
+        bestFor: "适用场景",
+        whySpreads: "适合分享的原因",
+        whyFits: "为什么像它",
+        memoryBasis: "记忆来源",
+        promptPreview: "自拍提示词预览",
+        exportPng: "导出海报 PNG",
+        deployedBy: "主人",
+        qr: "二维码",
+        photoPlaceholder: "等待附加图片",
+        sideHeadline: "Agent 分享卡片预览",
+        sideSubheadline: "首页默认展示的是空态预览。载入真实的 share-card 数据和最终图片后，这里才会显示正式内容。",
+        posterMark: "Agent 分享卡片"
+      },
+      en: {
+        bestFor: "Best For",
+        whySpreads: "Why It Spreads",
+        whyFits: "Why This Fits",
+        memoryBasis: "Memory Basis",
+        promptPreview: "Selfie Prompt Preview",
+        exportPng: "Export Poster PNG",
+        deployedBy: "DEPLOYED BY",
+        qr: "QR",
+        photoPlaceholder: "Image not attached",
+        sideHeadline: "Agent Share Card Preview",
+        sideSubheadline: "The home page starts in an empty preview state. Real content appears only after a valid share-card payload and final image are loaded.",
+        posterMark: "Agent Share Card"
+      }
+    };
+
+    let currentLanguage = document.documentElement.lang === "en" ? "en" : "zh";
+
+    function readAsset(asset) {
+      if (!asset) return null;
+      if (typeof asset === "string") return asset;
+      if (typeof asset === "object") return asset.data_url || asset.url || null;
+      return null;
+    }
+
+    function normalizeShareCard(raw) {
+      if (!raw || raw.schema_version !== "share-card/1.0") return defaultData;
+      return {
+        ...defaultData,
+        ...raw,
+        owner: { ...defaultData.owner, ...(raw.owner || {}) },
+        top_capabilities: Array.isArray(raw.top_capabilities) ? raw.top_capabilities.slice(0, 3) : defaultData.top_capabilities,
+        persona_tags: Array.isArray(raw.persona_tags) ? raw.persona_tags.slice(0, 3) : defaultData.persona_tags,
+        theme: { ...defaultData.theme, ...(raw.theme || {}) },
+        image: readAsset(raw.image),
+        qr: readAsset(raw.qr),
+        i18n: raw.i18n && typeof raw.i18n === "object" ? raw.i18n : null,
+      };
+    }
+
+    function resolveLocalizedCard(card, lang) {
+      const localized = card?.i18n?.[lang];
+      if (!localized) return card;
+      return {
+        ...card,
+        role: localized.role || card.role,
+        tagline: localized.tagline || card.tagline,
+        value_line: localized.value_line || card.value_line,
+        top_capabilities: Array.isArray(localized.top_capabilities) ? localized.top_capabilities.slice(0, 3) : card.top_capabilities,
+        best_for: localized.best_for || card.best_for,
+        proof_anchor: localized.proof_anchor || card.proof_anchor,
+        spread_line: localized.spread_line || card.spread_line,
+        memory_basis: localized.memory_basis || card.memory_basis,
+        selfie_prompt: localized.selfie_prompt || card.selfie_prompt,
+        poster_headline: localized.poster_headline || card.poster_headline,
+        poster_subline: localized.poster_subline || card.poster_subline,
+        persona_tags: Array.isArray(localized.persona_tags) ? localized.persona_tags.slice(0, 3) : card.persona_tags,
+        share_caption: localized.share_caption || card.share_caption,
+        share_keywords: Array.isArray(localized.share_keywords) ? localized.share_keywords : card.share_keywords,
+      };
+    }
+
+    function inferRoleBackdrop(role) {
+      if (!role) return "";
+      if (role.includes("销售")) return "pipeline";
+      if (role.includes("产品") || role.includes("策略")) return "strategy";
+      if (role.includes("招聘")) return "hiring";
+      if (role.includes("支持") || role.includes("客服")) return "support";
+      return "";
+    }
+
+    function inferPosterBadge(card) {
+      const name = String(card?.name || "").trim();
+      if (name.includes("ShrimpCard")) return "ShrimpCard";
+      if (name) return name.length <= 18 ? name : "Share Card";
+      return "Share Card";
+    }
+
+    function applyTheme(theme) {
+      const root = document.documentElement;
+      root.style.setProperty("--bg", theme.background || defaultData.theme.background);
+      root.style.setProperty("--border", theme.border || defaultData.theme.border);
+      root.style.setProperty("--accent", theme.accent || defaultData.theme.accent);
+      const tagColors = Array.isArray(theme.tag_colors) && theme.tag_colors.length >= 3 ? theme.tag_colors : defaultData.theme.tag_colors;
+      root.style.setProperty("--tag-1", tagColors[0]);
+      root.style.setProperty("--tag-2", tagColors[1]);
+      root.style.setProperty("--tag-3", tagColors[2]);
+      root.style.setProperty("--accent-strong", tagColors[2]);
+      root.style.setProperty("--accent-2", tagColors[2]);
+    }
+
+    function renderTags(tags) {
+      const node = document.getElementById("personaTags");
+      if (!node) return;
+      const colors = ["var(--tag-1)", "var(--tag-2)", "var(--tag-3)"];
+      node.replaceChildren(...tags.map((tag, index) => {
+        const span = document.createElement("span");
+        span.className = "persona-tag";
+        span.style.background = colors[index] || "#fff";
+        span.textContent = tag;
+        return span;
+      }));
+    }
+
+    function renderOwner(owner, lang) {
+      const node = document.getElementById("ownerBlock");
+      if (!node) return;
+      const lines = [];
+      if (owner.name) lines.push(`${uiText[lang].deployedBy} ${owner.name}`);
+      if (owner.contact) lines.push(owner.contact);
+      node.replaceChildren(...lines.map((line) => {
+        const div = document.createElement("div");
+        div.textContent = line;
+        return div;
+      }));
+    }
+
+    function renderImage(src, imageId, placeholderId) {
+      const img = document.getElementById(imageId);
+      const placeholder = document.getElementById(placeholderId);
+      const photo = img ? img.closest(".poster-photo") : null;
+      if (!img || !placeholder) return;
+      if (src) {
+        img.src = src;
+        img.style.display = "block";
+        placeholder.style.display = "none";
+        if (photo) photo.dataset.empty = "false";
+      } else {
+        img.removeAttribute("src");
+        img.style.display = "none";
+        placeholder.style.display = "flex";
+        if (photo) photo.dataset.empty = "true";
+      }
+    }
+
+    function applyImageStrategy(card) {
+      const photo = document.querySelector(".poster-photo");
+      if (!photo) return;
+      photo.dataset.guideMode = card.image ? "false" : "true";
+      const roleBackdrop = card.role_backdrop || "";
+      photo.dataset.roleBackdrop = roleBackdrop;
+      const exportCard = document.getElementById("exportCard");
+      if (exportCard) {
+        exportCard.dataset.roleBackdrop = roleBackdrop;
+        exportCard.dataset.guideMode = card.image ? "false" : "true";
+      }
+    }
+
+    function renderKeywords(card) {
+      const keywords = (Array.isArray(card.share_keywords) ? card.share_keywords : []).slice(0, 4);
+      const node = document.getElementById("metaKeywords");
+      if (!node) return;
+      node.replaceChildren(...keywords.map((keyword) => {
+        const span = document.createElement("span");
+        span.className = "meta-pill";
+        span.textContent = keyword;
+        return span;
+      }));
+    }
+
+    function applyUiLanguage(lang) {
+      const ui = uiText[lang] || uiText.zh;
+      const labels = document.querySelectorAll(".mini-label");
+      if (labels[0]) labels[0].textContent = ui.bestFor;
+      if (labels[1]) labels[1].textContent = ui.whySpreads;
+      if (labels[2]) labels[2].textContent = ui.memoryBasis;
+      if (labels[3]) labels[3].textContent = ui.promptPreview;
+      const proofLabel = document.querySelector(".proof-label");
+      if (proofLabel) proofLabel.textContent = ui.whyFits;
+      const qrPlaceholder = document.getElementById("qrPlaceholder");
+      if (qrPlaceholder) qrPlaceholder.textContent = ui.qr;
+      const photoPlaceholder = document.getElementById("photoPlaceholder");
+      if (photoPlaceholder) photoPlaceholder.textContent = ui.photoPlaceholder;
+      const posterMark = document.getElementById("posterMark");
+      if (posterMark) posterMark.textContent = ui.posterMark;
+    }
+
+    function renderCard(rawData, lang = currentLanguage) {
+      const ui = uiText[lang] || uiText.zh;
+      const baseCard = normalizeShareCard(rawData);
+      const card = resolveLocalizedCard(baseCard, lang);
+      const roleBackdrop = baseCard.role_backdrop || inferRoleBackdrop(baseCard.role);
+      card.role_backdrop = roleBackdrop;
+      card.image = baseCard.image;
+      applyTheme(card.theme || {});
+      applyUiLanguage(lang);
+
+      const posterBadge = document.getElementById("posterBadge");
+      if (posterBadge) posterBadge.textContent = inferPosterBadge(card);
+      const sideHeadline = document.getElementById("sideHeadline");
+      if (sideHeadline) sideHeadline.textContent = card.poster_headline || card.role || ui.sideHeadline;
+      const subheadline = document.getElementById("subheadline");
+      if (subheadline) subheadline.textContent = card.poster_subline || card.value_line || card.tagline || ui.sideSubheadline;
+      const name = document.getElementById("name");
+      if (name) name.textContent = card.name;
+      const role = document.getElementById("role");
+      if (role) role.textContent = card.role;
+      const tagline = document.getElementById("tagline");
+      if (tagline) tagline.textContent = card.tagline;
+      const shareCaption = document.getElementById("shareCaption");
+      if (shareCaption) shareCaption.textContent = card.share_caption || card.spread_line;
+      const bestFor = document.getElementById("bestFor");
+      if (bestFor) bestFor.textContent = card.best_for;
+      const spreadReason = document.getElementById("spreadReason");
+      if (spreadReason) spreadReason.textContent = card.spread_line;
+      const proofAnchor = document.getElementById("proofAnchor");
+      if (proofAnchor) proofAnchor.textContent = card.proof_anchor;
+      const memoryBasis = document.getElementById("memoryBasis");
+      if (memoryBasis) memoryBasis.textContent = card.memory_basis;
+      const selfiePrompt = document.getElementById("selfiePrompt");
+      if (selfiePrompt) selfiePrompt.textContent = card.selfie_prompt || defaultData.selfie_prompt;
+      renderTags(card.persona_tags && card.persona_tags.length ? card.persona_tags : defaultData.persona_tags);
+      renderOwner(card.owner || {}, lang);
+      renderKeywords(card);
+      applyImageStrategy(card);
+      renderImage(card.image, "mainImage", "photoPlaceholder");
+    }
+
+    const cardSource = window.__CARD_DATA__ || defaultData;
+    renderCard(cardSource, currentLanguage);
+  </script>
+</body>
+</html>
