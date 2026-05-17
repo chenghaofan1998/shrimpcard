@@ -1,26 +1,21 @@
 # OpenClaw ShrimpCard
 
-Turn real agent evidence into a validated public card bundle: self-intro JSON, share-card JSON, a real 8-bit character image, and final screenshot-friendly HTML.
+> Turn real agent evidence into a validated public identity card, complete with JSON payloads, a real 8-bit character image, and screenshot-ready HTML.
 
-## Why this project
+[中文文档](README.zh-CN.md) · [Chinese Demo Card](docs/showcase/selfie-card.zh.html) · [English Demo Card](docs/showcase/selfie-card.en.html) · [Final Share Card JSON](docs/showcase/share-card.final.json)
 
-Most "agent profile" demos stop at a prompt, a placeholder image, or some generic copy. OpenClaw ShrimpCard is stricter:
+![OpenClaw ShrimpCard pixel character](docs/showcase/openclaw-shrimpcard.png)
 
-- it starts from evidence instead of vibes
-- it rejects sample/fixture identity leakage
-- it forces validation before public copy ships
-- it requires a real attached image before final HTML renders
+## What it is
 
-This makes it useful when you want an agent card that is actually publishable, not just mockable.
+OpenClaw ShrimpCard is a strict card-generation workflow for agents.
 
-## What it produces
+Instead of shipping a vague profile page, it starts from live evidence and pushes the output through validation until you get a shareable final bundle:
 
-Given live `agent-evidence/1.0`, the pipeline produces:
-
-1. `agent-self-intro-submission/1.0`
-2. `share-card/1.0`
-3. a real 8-bit PNG character image
-4. final HTML card output for sharing or screenshot export
+- `agent-self-intro-submission/1.0`
+- `share-card/1.0`
+- a real 8-bit PNG character image
+- final screenshot-friendly HTML
 
 Canonical flow:
 
@@ -28,48 +23,43 @@ Canonical flow:
 agent-evidence -> self-intro submission -> share-card -> final image -> selfie-card.html
 ```
 
-## Showcase
+## Why it is different
 
-Generated project mascot:
+Most agent showcase projects fail in predictable ways: they use generic copy, leak fixture identities, stop at placeholder art, or never validate the final public output.
 
-![OpenClaw ShrimpCard pixel character](docs/showcase/openclaw-shrimpcard.png)
+OpenClaw ShrimpCard is built to reject that failure mode.
 
-Persistent showcase assets copied out of `output/`:
+- Evidence first. Public identity must come from repeated observed behavior.
+- Validation gated. Short fields, generic language, visual direction, and final bundle structure are checked by scripts.
+- Real image required. Final HTML should not ship before an actual image is attached.
+- End-to-end artifacts. Prompt builders, schemas, validators, converters, and renderer live in one repo.
 
-- Chinese card HTML: [docs/showcase/selfie-card.zh.html](docs/showcase/selfie-card.zh.html)
-- English card HTML: [docs/showcase/selfie-card.en.html](docs/showcase/selfie-card.en.html)
-- Final share-card bundle: [docs/showcase/share-card.final.json](docs/showcase/share-card.final.json)
+## What you can generate
 
-These files are intentionally stored under `docs/showcase/` so they remain available even if `output/` is deleted.
+Use it when you want to turn real agent traces into something publishable:
 
-## Core strengths
+- a public self-intro that does not drift into hype
+- a schema-backed share-card payload
+- a recognizable 8-bit mascot aligned with the agent identity
+- a final HTML card suitable for screenshots, demos, or landing-page embeds
 
-- Evidence-backed identity extraction. The workflow is designed to describe repeated observed behavior, not hypothetical ability.
-- Hard validation gates. Field length, generic wording, mascot rules, image constraints, and final-bundle checks are enforced by scripts.
-- Complete artifact chain. The repository covers prompts, schemas, validation, image attachment, and final rendering in one place.
-- Share-ready output. The final HTML removes preview-only internals and is suitable for direct presentation.
+## Live showcase
 
-## Repository structure
+These showcase files are stored under `docs/showcase/`, not `output/`, so they stay available even if generated outputs are cleaned up later.
 
-```text
-agents/       interface metadata
-assets/       card template and bundled visual assets
-examples/     smoke-test fixtures only, not live inputs
-references/   evidence extraction guidance
-schemas/      JSON schemas
-scripts/      prompt builders, validators, converters, renderers
-docs/showcase persistent demo assets for README and GitHub visitors
-```
+- Chinese HTML card: [docs/showcase/selfie-card.zh.html](docs/showcase/selfie-card.zh.html)
+- English HTML card: [docs/showcase/selfie-card.en.html](docs/showcase/selfie-card.en.html)
+- Final card payload: [docs/showcase/share-card.final.json](docs/showcase/share-card.final.json)
 
 ## Quick start
 
-Install the only required dependency:
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Then run the flow with your own live evidence:
+Run the workflow with your own live inputs:
 
 ```bash
 python3 scripts/build_memory_search_prompt.py path/to/agent-context.json --lang zh
@@ -84,31 +74,43 @@ python3 scripts/render_card_html.py share-card.json --lang zh --out selfie-card.
 
 ## Smoke test
 
-The repo includes a current-flow smoke test:
+The repo includes a fixture-based smoke test for the current flow:
 
 ```bash
 bash scripts/smoke_test_current_flow.sh
 ```
 
-It verifies that the fixture-based example path can still generate prompts, a share card, an attached-image bundle, and both Chinese and English HTML outputs.
+It verifies prompt generation, submission validation, share-card conversion, image attachment, and both Chinese and English HTML rendering.
+
+## Repo layout
+
+```text
+agents/         interface metadata
+assets/         card template and bundled visual assets
+docs/showcase/  persistent demo assets used by the README
+examples/       smoke-test fixtures only, never live identity inputs
+references/     evidence extraction guidance
+schemas/        JSON schemas
+scripts/        builders, validators, converters, and HTML renderer
+```
 
 ## Rules that matter
 
 - Do not use `examples/` as live identity evidence.
 - Do not guess missing owner identity fields.
-- Do not ship generic claims like "powerful assistant" or "strong reasoning".
-- Do not stop at placeholder-image state.
+- Do not publish generic claims like `powerful assistant` or `strong reasoning`.
+- Do not stop at prompt-only or placeholder-image state.
 - Do not render the final card before the image-attached bundle passes validation.
 
 ## Good fit
 
-OpenClaw ShrimpCard fits teams that want:
+OpenClaw ShrimpCard is a good fit if you need:
 
-- agent showcase pages with stronger truthfulness guarantees
-- a repeatable way to compress traces into public-facing copy
-- a share-card format that stays compatible with strict schema checks
-- a visual agent card that includes a real mascot asset instead of a mock placeholder
+- a more truthful way to present agent identity
+- a repeatable pipeline from traces to public copy
+- schema-backed output instead of loose prompt prose
+- an agent card with a real mascot asset instead of a mock placeholder
 
-## Current demo inputs
+## Current demo note
 
-The latest demo bundle in this repo was generated from live project evidence inside the current repository rather than `examples/`. The generated outputs were first written to `output/` and then the README-facing assets were copied into `docs/showcase/` for long-term retention.
+The current showcase bundle in this repository was generated from live project evidence inside this repo rather than from `examples/`. The generated assets were first written to `output/`, then copied into `docs/showcase/` for long-term retention.
