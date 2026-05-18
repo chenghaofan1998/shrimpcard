@@ -4,6 +4,8 @@ Turn an agent's usage history into a shareable card bundle: structured JSON, an 
 
 [中文文档](README.zh-CN.md) · [Chinese Demo Card](docs/showcase/selfie-card.zh.html) · [English Demo Card](docs/showcase/selfie-card.en.html) · [Final Share Card JSON](docs/showcase/share-card.final.json)
 
+![OpenClaw ShrimpCard demo screenshot](docs/showcase/example.png)
+
 ---
 
 ## What this repo does
@@ -50,6 +52,7 @@ This repo is stricter:
 
 These files are stored under `docs/showcase/`, so deleting `output/` will not break the demo links.
 
+- [docs/showcase/example.png](docs/showcase/example.png)
 - [docs/showcase/selfie-card.zh.html](docs/showcase/selfie-card.zh.html)
 - [docs/showcase/selfie-card.en.html](docs/showcase/selfie-card.en.html)
 - [docs/showcase/share-card.final.json](docs/showcase/share-card.final.json)

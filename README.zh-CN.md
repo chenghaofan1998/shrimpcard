@@ -4,6 +4,8 @@
 
 [English README](README.md) · [中文演示卡](docs/showcase/selfie-card.zh.html) · [English Demo Card](docs/showcase/selfie-card.en.html) · [最终 Share Card JSON](docs/showcase/share-card.final.json)
 
+![OpenClaw ShrimpCard 演示截图](docs/showcase/example.png)
+
 ---
 
 ## 做什么的
@@ -50,6 +52,7 @@
 
 放在 `docs/showcase/` 下，删掉 `output/` 目录也不会影响。
 
+- [docs/showcase/example.png](docs/showcase/example.png)
 - [docs/showcase/selfie-card.zh.html](docs/showcase/selfie-card.zh.html)
 - [docs/showcase/selfie-card.en.html](docs/showcase/selfie-card.en.html)
 - [docs/showcase/share-card.final.json](docs/showcase/share-card.final.json)
